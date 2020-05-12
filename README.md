@@ -2,15 +2,22 @@
 
 A shell script I wrote to automate loading secrets to azure keyvault from a json file.
 
-##Pre-requisites
+## Pre-requisites
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/?view=azure-cli-latest)
 - [Python 3.x](https://www.python.org/downloads/) (Normally installed along with azure-cli)
 
-##Usage
-```bash
+## Usage
+Make script executable
+```sh
 chmod +x ./az-kv-json-load.sh
 ```
 
+Login to your azure account
+```sh
+az login
+```
+
+Run script
 ```
 ./az-kv-json-load.sh [OPTIONS]
 
@@ -27,7 +34,7 @@ Options:
 -h or --help                        Print help text and exit.
 ```
 
-##Examples
+## Examples
 ```json
 {
     "Key1": "Value1",
