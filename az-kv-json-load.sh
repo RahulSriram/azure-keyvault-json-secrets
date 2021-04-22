@@ -5,6 +5,7 @@ delimiter="--"
 separator=$'\t'
 filename=
 vault=
+subscription=
 READ_MODE=0
 EXEC_MODE=1
 SUCCESS_CODE=0
@@ -21,12 +22,14 @@ usage() {
     echo
     echo "Usage: $0 [OPTIONS]"
     echo "Options:"
-    echo "-n or --vault-name <vault-name>     Name of the azure keyvault."
-    echo "-f or --file <path-to-file>         Json file to read secrets from."
-    echo "-y or --yes                         Skip user confirmation before uploading discovered secrets."
-    echo "-s or --sensitive                   Assume all values are sensitive in nature,"
-    echo "                                      and dont display them."
-    echo "-h or --help                        Print Help (this message) and exit."
+    echo "-n or --vault-name <vault-name>         Name of the azure keyvault."
+    echo "-s or --subscription <subscription>     Name or ID of the azure subscription."
+    echo "                                          Uses default subscription if not set."
+    echo "-f or --file <path-to-file>             Json file to read secrets from."
+    echo "-y or --yes                             Skip user confirmation before uploading discovered secrets."
+    echo "--sensitive                             Assume all values are sensitive in nature,"
+    echo "                                          and dont display them."
+    echo "-h or --help                            Print Help (this message) and exit."
     echo
 }
 
@@ -52,10 +55,14 @@ while [ "$1" != "" ]; do
             shift
             vault=$1
             ;;
+        -s | --subscription)
+            shift
+            subscription=$1
+            ;;
         -y | --yes)
             skip_confirmation=true
             ;;
-        -s | --sensitive)
+        --sensitive)
             sensitive_info=true
             ;;
         -h | --help)
@@ -149,10 +156,17 @@ loadKeyVaultSecrets() {
             echo "${key}${printVal}"
         elif [ $1 == "$EXEC_MODE" ]; then
             echo "Adding ${key}${printVal}"
-            az keyvault secret set --vault-name "$vault" --name "$key" --value "$val" > /dev/null || {
-                echo >&2 "ERROR: Failed to load secret $key"
-                abort $FAIL_CODE
-            }
+            if [ "$subscription" == "" ]; then
+                az keyvault secret set --vault-name "$vault" --name "$key" --value "$val" > /dev/null || {
+                    echo >&2 "ERROR: Failed to load secret $key"
+                    abort $FAIL_CODE
+                }
+            else
+                az keyvault secret set --subscription "$subscription" --vault-name "$vault" --name "$key" --value "$val" > /dev/null || {
+                    echo >&2 "ERROR: Failed to load secret $key"
+                    abort $FAIL_CODE
+                }
+            fi
         fi
     done <<< "$flatJsonResult"
 }
