@@ -22,16 +22,14 @@ Run script
 ./az-kv-json-load.sh [OPTIONS]
 
 Options:
--n or --vault-name <vault-name>     Name of the azure keyvault.
-
--f or --file <path-to-file>         Path to the json file to read secrets from.
-
--y or --yes                         Skip user confirmation before uploading discovered secrets.
-
--s or --sensitive                   Assume all values are sensitive in nature,
-                                      and dont display them.
-
--h or --help                        Print help text and exit.
+-n or --vault-name <vault-name>         Name of the azure keyvault.
+-s or --subscription <subscription>     Name or ID of the azure subscription.
+                                          Uses default subscription if not set.
+-f or --file <path-to-file>             Path to the json file to read secrets from.
+-y or --yes                             Skip user confirmation before uploading discovered secrets.
+--sensitive                             Assume all values are sensitive in nature,
+                                          and dont display them.
+-h or --help                            Print help text and exit.
 ```
 
 ## Examples
